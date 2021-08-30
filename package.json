@@ -1,0 +1,25 @@
+{
+  "name": "batwood-ems",
+  "version": "1.0.0",
+  "description": "SQL: Employee Tracker (EMS)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrockAtwood/BATWOOD-EMS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BrockAtwood/BATWOOD-EMS/issues"
+  },
+  "homepage": "https://github.com/BrockAtwood/BATWOOD-EMS#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "inquirer": "^8.1.2",
+    "mysql2": "^2.3.0"
+  }
+}
