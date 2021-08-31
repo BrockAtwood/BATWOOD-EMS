@@ -1,5 +1,14 @@
+//dependancies
+const express = require("express");
+const app = express();
+const PORT = process.env.PORT || 3131;
+//other (by vs code)
 const inquirer = require("inquirer");
 const Choice = require("inquirer/lib/objects/choice");
+
+//M-ware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //Main menu selection options
 const mainMenu = () => {
@@ -31,3 +40,8 @@ const mainMenu = () => {
 //View All Departments prompt
 //Add Department prompt
 //quit and exit out prompt
+
+//listener
+app.listen(PORT, () => {
+  console.log(`Server is listening on ${PORT}`);
+});
