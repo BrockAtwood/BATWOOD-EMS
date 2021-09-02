@@ -1,9 +1,9 @@
 /* basic drop, create, & use boiler for schema*/
-DROP DATABASE IF EXISTS employee_db;
+DROP DATABASE IF EXISTS business_db;
 
-CREATE DATABASE employee_db;
+CREATE DATABASE business_db;
 
-USE employee_db;
+USE business_db;
 /* examples from activity #22 */
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
