@@ -1,14 +1,44 @@
-//dependancies
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 3131;
-//other (by vs code)
+//dependancies - from directions
+//get the client
+const mysql = require("mysql2");
 const inquirer = require("inquirer");
-const Choice = require("inquirer/lib/objects/choice");
+require("console.table");
 
-//M-ware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+//Neat starter font
+var figlet = require("figlet");
+
+//create the connection (shown in npmjs.com link in directions)
+const connection = mysql.createConnection({
+  //mySQLworkbench
+  host: "localhost",
+  PORT: 3306,
+  //username
+  user: "root",
+  //password
+  password: "password",
+  //database name (from schema.sql)
+  database: "business_db",
+});
+// w2schools demo help
+connection.connect(function (err) {
+  if (err) throw err;
+  console.log("Connected!");
+  console.clear(), begin();
+});
+
+//Figlet display and start of app
+async function begin() {
+  console.clear();
+  console.log(
+    figlet.textSync("Atwood Entertainment", {
+      font: "Ghost",
+      horizontalLayout: "default",
+      verticalLayout: "default",
+    })
+  );
+
+  //start questions and prompts in here!
+}
 
 //Main menu selection options
 const mainMenu = () => {
