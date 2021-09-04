@@ -2,16 +2,34 @@
 //get the client
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
-const cTable = require("console.table");
+require("console.table");
 
 //Neat starter font
 var figlet = require("figlet");
 
 //Connection to connection.js for creating connection to server
-const connection = require("./config/connection");
-const { connect } = require("./config/connection");
+// const connection = require("./config/connection");
+
 // ALL MOVED INTO CONNECT.JS //create the connection (shown in npmjs.com link in directions)
-logo();
+//create the connection (shown in npmjs.com link in directions)
+var connection = mysql.createConnection({
+  //mySQLworkbench
+  host: "localhost",
+  port: 3306,
+  //username
+  user: "root",
+  //password
+  password: "password",
+  //database name (from schema.sql)
+  database: "business_db",
+});
+
+//w3schools node.js with mysql
+connection.connect(function (err) {
+  if (err) throw err;
+  console.log("You are Connected, Lets begin!");
+});
+
 //Figlet display starter logo
 function logo() {
   console.log(
@@ -24,76 +42,48 @@ function logo() {
 }
 
 // //starter prompt
-async function starterPrompt() {
-  return inquirer.prompt([
-    {
-      type: "list",
-      message: "What would you like to do?",
-      name: "beginChoice",
-      Choices: [
-        "View All Departments",
-        "View All Roles",
-        "View All Employees",
-        "Add a Department",
-        "Add a Role",
-        "Add Employee",
-        "update Employee Role",
-        "Quit",
-      ],
-    },
-  ]);
+function init() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        message: "What would you like to do?",
+        name: "beginChoice",
+        choices: [
+          "View All Departments",
+          "View All Roles",
+          "View All Employees",
+          "Add a Department",
+          "Add a Role",
+          "Add Employee",
+          "update Employee Role",
+          "Quit",
+        ],
+      },
+    ])
+    .then((answer) => {
+      const userPick = answer.beginChoice;
+
+      userPick === "View All Departments"
+        ? viewAllDepartments()
+        : userPick === "View All Roles"
+        ? viewAllRoles()
+        : userPick === "View All Employees"
+        ? viewAllEmployees()
+        : userPick === "Add a Department"
+        ? addDepartment()
+        : userPick === "Add a Role"
+        ? addRole()
+        : userPick === "add an Employee"
+        ? addEmployee()
+        : userPick === "Update an Employee Role"
+        ? updateEmployeeRole()
+        : userPick === "Quit"
+        ? console.log("Thank you, and Goodbye!")
+        : console.end();
+    });
 }
 //where it all begins!
-async function homework() {
-  const promptQuestions = await starterPrompt();
-
-  switch (promptQuestions.starterPrompt) {
-    case "View All Departments": {
-      viewAllDepartments();
-      break;
-    }
-
-    case "View All Roles": {
-      viewAllRoles();
-      break;
-    }
-
-    case "View All Employees": {
-      viewAllEmployees();
-      break;
-    }
-
-    case "Add a Department": {
-      addDepartment();
-      break;
-    }
-
-    case "Add a Role": {
-      addRole();
-      break;
-    }
-
-    case "add an Employee": {
-      addEmployee();
-      break;
-    }
-
-    case "Update an Employee Role": {
-      updateEmployeeRole();
-      break;
-    }
-
-    case "Quit": {
-      console.log("Thank you, and Goodbye!");
-      break;
-    }
-
-    default:
-      console.log("Please select one of the valid answers");
-      starterPrompt();
-      break;
-  }
-}
 
 //Viewing all departments
 function viewAllDepartments() {
@@ -149,8 +139,8 @@ async function addDepartment() {
 }
 
 //adding a new role to the db
-async function addRole() {
-  const newRoleInfo = await inquirer.prompt(addRoleQuestions);
+function addRole() {
+  const newRoleInfo = inquirer.prompt(addRoleQuestions);
   connection.query(
     "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
     {
@@ -168,8 +158,8 @@ async function addRole() {
 }
 
 //adding a new employee to the db
-async function addEmployee() {
-  const newEmployeeInfo = await inquirer.prompt(addEmployeeQuestions);
+function addEmployee() {
+  const newEmployeeInfo = inquirer.prompt(addEmployeeQuestions);
   connection.query(
     "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
     {
@@ -188,9 +178,9 @@ async function addEmployee() {
 }
 
 //updating existing employee
-async function updateEmployeeRole() {
-  connect.query("SELECT * FROM employee", async (err, employee) => {
-    const { employ, updatedRole } = await inquirer.prompt([
+function updateEmployeeRole() {
+  connect.query("SELECT * FROM employee", (err, employee) => {
+    const { employ, updatedRole } = inquirer.prompt([
       {
         type: "list",
         name: "employ",
@@ -217,7 +207,7 @@ async function updateEmployeeRole() {
           role_id: updatedRole,
         },
         {
-          employ: first_name,
+          first_name: employ,
         },
       ],
       function (err, res) {
@@ -230,8 +220,8 @@ async function updateEmployeeRole() {
 }
 
 //new department questions
-async function addDepartmentQuestion() {
-  return inquirer.prompt([
+function addDepartmentQuestion() {
+  inquirer.prompt([
     {
       type: "input",
       name: "newDepartment",
@@ -241,8 +231,8 @@ async function addDepartmentQuestion() {
 }
 
 //new role questions
-async function addRoleQuestions() {
-  return inquirer.prompt([
+function addRoleQuestions() {
+  inquirer.prompt([
     {
       type: "input",
       name: "newRoleName",
@@ -271,8 +261,8 @@ async function addRoleQuestions() {
 }
 
 //new employee questions
-async function addEmployeeQuestions() {
-  return inquirer.prompt([
+function addEmployeeQuestions() {
+  inquirer.prompt([
     {
       type: "input",
       name: "first_name",
@@ -322,7 +312,7 @@ function lastQuestion() {
     .then((answer) => {
       if (answer.lastQuestion !== "Quit") {
         //goes back to the beginning
-        lastQuestion();
+        init();
       } else {
         //clears, logs and ends connection
         console.clear();
@@ -331,3 +321,6 @@ function lastQuestion() {
       }
     });
 }
+
+logo();
+init();
