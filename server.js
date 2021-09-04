@@ -2,7 +2,7 @@
 //get the client
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
-require("console.table");
+const cTable = require("console.table");
 
 //Neat starter font
 var figlet = require("figlet");
@@ -89,6 +89,7 @@ function init() {
 function viewAllDepartments() {
   //query data
   connection.query("SELECT * FROM department", (err, res) => {
+    console.log("\nDepartment Table\n");
     if (err) throw error;
     //display all departments in table
     console.table(res);
@@ -101,6 +102,7 @@ function viewAllDepartments() {
 function viewAllRoles() {
   //query data
   connection.query("SELECT * FROM role", (err, res) => {
+    console.log("\nRoles Table\n");
     if (err) throw error;
     //display all departments in table
     console.table(res);
@@ -113,6 +115,7 @@ function viewAllRoles() {
 function viewAllEmployees() {
   //query data
   connection.query("SELECT * FROM employee", (err, res) => {
+    console.log("\nEmployees Table\n");
     if (err) throw error;
     //display all departments in table
     console.table(res);
@@ -122,10 +125,10 @@ function viewAllEmployees() {
 }
 
 //adding a new department to the db
-async function addDepartment() {
-  const newDepartmentInfo = await inquirer.prompt(addDepartmentQuestion);
+function addDepartment() {
+  const newDepartmentInfo = inquirer.prompt(addDepartmentQuestion);
   connection.query(
-    "INSERT INTO department (name) VALUES (?)",
+    "INSERT INTO department (department_name) VALUES (?)",
     {
       newDepartment: newDepartmentInfo.newDepartment,
     },
@@ -316,6 +319,7 @@ function lastQuestion() {
       } else {
         //clears, logs and ends connection
         console.clear();
+        logo();
         console.log("Thank you and Goodbye!");
         connection.end();
       }
