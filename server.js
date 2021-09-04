@@ -9,6 +9,7 @@ var figlet = require("figlet");
 
 //Connection to connection.js for creating connection to server
 const connection = require("./config/connection");
+const { connect } = require("./config/connection");
 // ALL MOVED INTO CONNECT.JS //create the connection (shown in npmjs.com link in directions)
 logo();
 //Figlet display starter logo
@@ -46,7 +47,7 @@ async function starterPrompt() {
 async function homework() {
   const promptQuestions = await starterPrompt();
 
-  switch (promptQuestions.beginChoice) {
+  switch (promptQuestions.starterPrompt) {
     case "View All Departments": {
       viewAllDepartments();
       break;
@@ -130,6 +131,7 @@ function viewAllEmployees() {
   });
 }
 
+//adding a new department to the db
 async function addDepartment() {
   const newDepartmentInfo = await inquirer.prompt(addDepartmentQuestion);
   connection.query(
@@ -140,68 +142,94 @@ async function addDepartment() {
     function (err) {
       if (err) throw err;
       console.log("You successfully added a new Department");
-      starterPrompt();
+      //sends user back to the beginning or lets user quit and be done
+      lastQuestion();
     }
   );
 }
 
+//adding a new role to the db
 async function addRole() {
   const newRoleInfo = await inquirer.prompt(addRoleQuestions);
   connection.query(
     "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
     {
-      title: newRoleInfo.newRoleName,
+      newRoleName: newRoleInfo.newRoleName,
       salary: newRoleInfo.salary,
-      department_id: newRoleInfo.departmentName,
+      departmentName: newRoleInfo.departmentName,
     },
     function (err) {
       if (err) throw err;
       console.log("You successfully added a new role!");
-      starterPrompt();
+      //sends user back to the beginning or lets user quit and be done
+      lastQuestion();
     }
   );
 }
 
-// async function addEmployee() {
-//     return inquirer.prompt ([
-//         {
-//             type: "input",
-//             name: "first_name",
-//             message: "What is your new Employee's first name?"
-//         },
-//         {
-//             type: "inpuit",
-//             name: "last_name",
-//             message: "What is your new Employee's last name?"
-//         },
-//         {
-//             type: "input",
-//             name: "role",
-//             message: "What is your new Employee's Role?",
-//             choices: [
-//                 "Manager",
-//                 "Sales Representative",
-//                 "Financial Analyst",
-//                 "Lawyer",
-//                 "Junior Engineer",
-//                 "Senior Engineer",
-//                 "Junior Accountant",
-//                 "Senior Accountant",
-//                 "Human Resources"
-//             ],
-//         },
-//         {
-//             type: "input",
-//             name: "manager",
-//             message: "Who is your new Employee's Manager?",
-//             choices: [
-//                 "Brock Atwood",
-//                 "No manager"
-//             ],
-//         },
-//     ])
-// };
+//adding a new employee to the db
+async function addEmployee() {
+  const newEmployeeInfo = await inquirer.prompt(addEmployeeQuestions);
+  connection.query(
+    "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+    {
+      first_name: newEmployeeInfo.first_name,
+      last_name: newEmployeeInfo.last_name,
+      role_id: newEmployeeInfo.role_id,
+      manager_id: newEmployeeInfo.manager_id,
+    },
+    function (err) {
+      if (err) throw err;
+      console.log("You successfully added a new employee!");
+      //sends user back to the beginning or lets user quit and be done
+      lastQuestion();
+    }
+  );
+}
 
+//updating existing employee
+async function updateEmployeeRole() {
+  connect.query("SELECT * FROM employee", async (err, employee) => {
+    const { employ, updatedRole } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "employ",
+        message: "Which employee would you like to update?",
+        //show employee array to select from for updating
+        choices: () => {
+          return employee.map((employee) => employee.first_name);
+        },
+      },
+      {
+        type: "list",
+        name: "updatedRole",
+        message: "What is the employee's updated role?",
+        choices: () => {
+          return employee.map((employee) => employee.role_id);
+        },
+      },
+    ]);
+    //update new information from the user for first name and role id
+    connection.query(
+      "UPDATE employees SET role_id=? WHERE employee.first_name=?",
+      [
+        {
+          role_id: updatedRole,
+        },
+        {
+          employ: first_name,
+        },
+      ],
+      function (err, res) {
+        if (err) throw err;
+        console.table(employee);
+        lastQuestion();
+      }
+    );
+  });
+}
+
+//new department questions
 async function addDepartmentQuestion() {
   return inquirer.prompt([
     {
@@ -212,6 +240,7 @@ async function addDepartmentQuestion() {
   ]);
 }
 
+//new role questions
 async function addRoleQuestions() {
   return inquirer.prompt([
     {
@@ -241,13 +270,51 @@ async function addRoleQuestions() {
   ]);
 }
 
+//new employee questions
+async function addEmployeeQuestions() {
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "first_name",
+      message: "What is your new Employee's first name?",
+    },
+    {
+      type: "inpuit",
+      name: "last_name",
+      message: "What is your new Employee's last name?",
+    },
+    {
+      type: "input",
+      name: "role_id",
+      message: "What is your new Employee's Role?",
+      choices: [
+        "Manager",
+        "Sales Representative",
+        "Financial Analyst",
+        "Lawyer",
+        "Junior Engineer",
+        "Senior Engineer",
+        "Junior Accountant",
+        "Senior Accountant",
+        "Human Resources",
+      ],
+    },
+    {
+      type: "input",
+      name: "manager_id",
+      message: "Who is your new Employee's Manager?",
+      choices: ["Brock Atwood", "No manager"],
+    },
+  ]);
+}
+
 //end of every user walkthrough, eithere start over or quit
 function lastQuestion() {
   inquirer
     .prompt([
       {
         type: "list",
-        message: "What you you like to do next?",
+        message: "What would you like to do next?",
         choices: ["Go back to the Start", "Quit"],
         name: "lastQuestion",
       },
@@ -255,7 +322,7 @@ function lastQuestion() {
     .then((answer) => {
       if (answer.lastQuestion !== "Quit") {
         //goes back to the beginning
-        beginChoice;
+        lastQuestion();
       } else {
         //clears, logs and ends connection
         console.clear();
