@@ -88,7 +88,7 @@ function init() {
 //Viewing all departments
 function viewAllDepartments() {
   //query data
-  connection.query("SELECT * FROM department", (err, res) => {
+  connection.query("SELECT * FROM departments", (err, res) => {
     console.log("\nDepartment Table\n");
     if (err) throw error;
     //display all departments in table
@@ -101,7 +101,7 @@ function viewAllDepartments() {
 //viewing all roles
 function viewAllRoles() {
   //query data
-  connection.query("SELECT * FROM role", (err, res) => {
+  connection.query("SELECT * FROM roles", (err, res) => {
     console.log("\nRoles Table\n");
     if (err) throw error;
     //display all departments in table
@@ -124,14 +124,18 @@ function viewAllEmployees() {
   });
 }
 
-//adding a new department to the db
-function addDepartment() {
-  const newDepartmentInfo = inquirer.prompt(addDepartmentQuestion);
-  connection.query(
-    "INSERT INTO department (department_name) VALUES (?)",
+// adding a new department with question to the db
+async function addDepartment() {
+  const newDepartmentInfo = await inquirer.prompt([
     {
-      newDepartment: newDepartmentInfo.newDepartment,
+      type: "input",
+      name: "newDepartment",
+      message: "What is the name of your new Department?",
     },
+  ]);
+  connection.query(
+    `INSERT INTO departments (department_name) VALUES ('${newDepartmentInfo.newDepartment}')`,
+
     function (err) {
       if (err) throw err;
       console.log("You successfully added a new Department");
@@ -141,43 +145,150 @@ function addDepartment() {
   );
 }
 
-//adding a new role to the db
-function addRole() {
-  const newRoleInfo = inquirer.prompt(addRoleQuestions);
-  connection.query(
-    "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
-    {
-      newRoleName: newRoleInfo.newRoleName,
-      salary: newRoleInfo.salary,
-      departmentName: newRoleInfo.departmentName,
-    },
-    function (err) {
-      if (err) throw err;
-      console.log("You successfully added a new role!");
-      //sends user back to the beginning or lets user quit and be done
-      lastQuestion();
-    }
-  );
+//adding a new role with questions to the db
+async function addRole() {
+  await inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "newRoleName",
+        message: "What is the new Role name?",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "What is the salary of the new Role?",
+      },
+      {
+        type: "list",
+        name: "departmentName",
+        message: "What department is this new Role a part of?",
+        choices: [
+          "Manager",
+          "Sales",
+          "Finance",
+          "Legal",
+          "Engineering",
+          "Accounting",
+          "Human Resources",
+        ],
+      },
+    ])
+    .then((response) => {
+      const department = response.departmentName;
+
+      let departId;
+
+      department === "Manager"
+        ? (departId = 1)
+        : department === "Sales"
+        ? (departId = 2)
+        : department === "Finance"
+        ? (departId = 3)
+        : department === "Legal"
+        ? (departId = 4)
+        : department === "Engineering"
+        ? (departId = 5)
+        : department === "Accounting"
+        ? (departId = 6)
+        : department === "Human Resources"
+        ? (departId = 7)
+        : console.log("Please choose a vaild option!");
+
+      connection.query(
+        `INSERT INTO roles (title, salary, department_id) VALUES ('${response.newRoleName}', '${response.salary}', '${departId}')`,
+
+        function (err) {
+          if (err) throw err;
+          console.log("You successfully added a new role!");
+          //sends user back to the beginning or lets user quit and be done
+          lastQuestion();
+        }
+      );
+    });
 }
 
-//adding a new employee to the db
-function addEmployee() {
-  const newEmployeeInfo = inquirer.prompt(addEmployeeQuestions);
-  connection.query(
-    "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
-    {
-      first_name: newEmployeeInfo.first_name,
-      last_name: newEmployeeInfo.last_name,
-      role_id: newEmployeeInfo.role_id,
-      manager_id: newEmployeeInfo.manager_id,
-    },
-    function (err) {
-      if (err) throw err;
-      console.log("You successfully added a new employee!");
-      //sends user back to the beginning or lets user quit and be done
-      lastQuestion();
-    }
-  );
+//adding a new employee with questions to the db
+async function addEmployee() {
+  await inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "first_name",
+        message: "What is your new Employee's first name?",
+      },
+      {
+        type: "input",
+        name: "last_name",
+        message: "What is your new Employee's last name?",
+      },
+      {
+        type: "list",
+        name: "role_id",
+        message: "What is your new Employee's Role?",
+        choices: [
+          "Manager",
+          "Sales Representative",
+          "Financial Analyst",
+          "Lawyer",
+          "Junior Engineer",
+          "Senior Engineer",
+          "Junior Accountant",
+          "Senior Accountant",
+          "Human Resources",
+        ],
+      },
+      {
+        type: "list",
+        name: "manager_id",
+        message: "Who is your new Employee's Manager?",
+        choices: ["Brock Atwood", "No Manager"],
+      },
+    ])
+    .then((response) => {
+      const roless = response.role_id;
+      const managerr = response.manager_id;
+
+      let rolessId;
+      let managerrId;
+
+      roless === "Manager"
+        ? (rolessId = 1)
+        : roless === "Sales Representative"
+        ? (rolessId = 2)
+        : roless === "Financial Analyst"
+        ? (rolessId = 3)
+        : roless === "Lawyer"
+        ? (rolessId = 4)
+        : roless === "Junior Engineer"
+        ? (rolessId = 5)
+        : roless === "Senior Engineer"
+        ? (rolessId = 6)
+        : roless === "Junior Accountant"
+        ? (rolessId = 7)
+        : roless === "Senior Accountant"
+        ? (rolessId = 8)
+        : roless === "Human Resources"
+        ? (rolessId = 9)
+        : console.log("Please choose a vaild option!");
+
+      managerr === "Brock Atwood"
+        ? (managerrId = 1)
+        : managerr === "No Manager"
+        ? (mangerrId = 2)
+        : console.log("Please choose a vaild option!");
+
+      connection.query(
+        `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${response.first_name}', '${response.last_name}', '${rolessId}, '${managerrId}')`,
+
+        function (err) {
+          if (err) throw err;
+          console.log("You successfully added a new employee!");
+          //sends user back to the beginning or lets user quit and be done
+          lastQuestion();
+        }
+      );
+    });
 }
 
 //updating existing employee
@@ -220,85 +331,6 @@ function updateEmployeeRole() {
       }
     );
   });
-}
-
-//new department questions
-function addDepartmentQuestion() {
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "newDepartment",
-      message: "What is the name of your new Dempartment?",
-    },
-  ]);
-}
-
-//new role questions
-function addRoleQuestions() {
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "newRoleName",
-      message: "What is the new Role name?",
-    },
-    {
-      type: "input",
-      name: "salary",
-      message: "What is the salary of the new Role?",
-    },
-    {
-      type: "input",
-      name: "departmentName",
-      message: "What department is this new Role a part of?",
-      choices: [
-        "Manager",
-        "Sales",
-        "Finance",
-        "Legal",
-        "Engineering",
-        "Accounting",
-        "Human Resources",
-      ],
-    },
-  ]);
-}
-
-//new employee questions
-function addEmployeeQuestions() {
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "first_name",
-      message: "What is your new Employee's first name?",
-    },
-    {
-      type: "inpuit",
-      name: "last_name",
-      message: "What is your new Employee's last name?",
-    },
-    {
-      type: "input",
-      name: "role_id",
-      message: "What is your new Employee's Role?",
-      choices: [
-        "Manager",
-        "Sales Representative",
-        "Financial Analyst",
-        "Lawyer",
-        "Junior Engineer",
-        "Senior Engineer",
-        "Junior Accountant",
-        "Senior Accountant",
-        "Human Resources",
-      ],
-    },
-    {
-      type: "input",
-      name: "manager_id",
-      message: "Who is your new Employee's Manager?",
-      choices: ["Brock Atwood", "No manager"],
-    },
-  ]);
 }
 
 //end of every user walkthrough, eithere start over or quit
