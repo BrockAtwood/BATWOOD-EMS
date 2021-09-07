@@ -56,7 +56,7 @@ function init() {
           "Add a Department",
           "Add a Role",
           "Add Employee",
-          "update Employee Role",
+          "Update Employee Role",
           "Quit",
         ],
       },
@@ -74,9 +74,9 @@ function init() {
         ? addDepartment()
         : userPick === "Add a Role"
         ? addRole()
-        : userPick === "add an Employee"
+        : userPick === "Add Employee"
         ? addEmployee()
-        : userPick === "Update an Employee Role"
+        : userPick === "Update Employee Role"
         ? updateEmployeeRole()
         : userPick === "Quit"
         ? console.log("Thank you, and Goodbye!")
@@ -214,17 +214,17 @@ async function addEmployee() {
     .prompt([
       {
         type: "input",
-        name: "first_name",
+        name: "firstName",
         message: "What is your new Employee's first name?",
       },
       {
         type: "input",
-        name: "last_name",
+        name: "lastName",
         message: "What is your new Employee's last name?",
       },
       {
         type: "list",
-        name: "role_id",
+        name: "roleId",
         message: "What is your new Employee's Role?",
         choices: [
           "Manager",
@@ -240,14 +240,14 @@ async function addEmployee() {
       },
       {
         type: "list",
-        name: "manager_id",
+        name: "managerId",
         message: "Who is your new Employee's Manager?",
         choices: ["Brock Atwood", "No Manager"],
       },
     ])
     .then((response) => {
-      const roless = response.role_id;
-      const managerr = response.manager_id;
+      const roless = response.roleId;
+      const managerr = response.managerId;
 
       let rolessId;
       let managerrId;
@@ -275,11 +275,11 @@ async function addEmployee() {
       managerr === "Brock Atwood"
         ? (managerrId = 1)
         : managerr === "No Manager"
-        ? (mangerrId = 2)
+        ? (managerrId = 2)
         : console.log("Please choose a vaild option!");
 
       connection.query(
-        `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${response.first_name}', '${response.last_name}', '${rolessId}, '${managerrId}')`,
+        `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${response.firstName}', '${response.lastName}', '${rolessId}', '${managerrId}')`,
 
         function (err) {
           if (err) throw err;
@@ -292,47 +292,94 @@ async function addEmployee() {
 }
 
 //updating existing employee
-function updateEmployeeRole() {
-  connect.query("SELECT * FROM employee", (err, employee) => {
-    const { employ, updatedRole } = inquirer.prompt([
+async function updateEmployeeRole() {
+  await inquirer
+    .prompt([
       {
         type: "list",
         name: "employ",
         message: "Which employee would you like to update?",
-        //show employee array to select from for updating
-        choices: () => {
-          return employee.map((employee) => employee.first_name);
-        },
+        choices: [
+          "Brock Atwood",
+          "Suzy Evans",
+          "Jon Candy",
+          "Bob Hope",
+          "Lebron James",
+          "Chris Paul",
+          "Snoop Dogg",
+        ],
       },
       {
         type: "list",
         name: "updatedRole",
         message: "What is the employee's updated role?",
-        choices: () => {
-          return employee.map((employee) => employee.role_id);
-        },
+        choices: [
+          "Manager",
+          "Sales Representative",
+          "Financial Analyst",
+          "Lawyer",
+          "Junior Engineer",
+          "Senior Engineer",
+          "Junior Accountant",
+          "Senior Accountant",
+          "Human Resources",
+        ],
       },
-    ]);
-    //update new information from the user for first name and role id
-    connection.query(
-      "UPDATE employees SET role_id=? WHERE employee.first_name=?",
-      [
-        {
-          role_id: updatedRole,
-        },
-        {
-          first_name: employ,
-        },
-      ],
-      function (err, res) {
-        if (err) throw err;
-        console.table(employee);
-        lastQuestion();
-      }
-    );
-  });
-}
+    ])
+    .then((response) => {
+      const person = response.employ;
+      const rolesss = response.updatedRole;
 
+      let rolesssId;
+      let personUpdate;
+
+      rolesss === "Manager"
+        ? (rolesssId = 1)
+        : rolesss === "Sales Representative"
+        ? (rolesssId = 2)
+        : rolesss === "Financial Analyst"
+        ? (rolesssId = 3)
+        : rolesss === "Lawyer"
+        ? (rolesssId = 4)
+        : rolesss === "Junior Engineer"
+        ? (rolesssId = 5)
+        : rolesss === "Senior Engineer"
+        ? (rolesssId = 6)
+        : rolesss === "Junior Accountant"
+        ? (rolesssId = 7)
+        : rolesss === "Senior Accountant"
+        ? (rolesssId = 8)
+        : rolesss === "Human Resources"
+        ? (rolesssId = 9)
+        : console.log("Please choose a vaild option!");
+
+      person === "Brock Atwood"
+        ? (personUpdate = "Brock")
+        : person === "Suzy Evans"
+        ? (personUpdate = "Suzy")
+        : person === "Jon Candy"
+        ? (personUpdate = "Jon")
+        : person === "Bob Hope"
+        ? (personUpdate = "Bob")
+        : person === "Lebron James"
+        ? (personUpdate = "Lebron")
+        : person === "Chris Paul"
+        ? (personUpdate = "Chris")
+        : person === "Snoop Dogg"
+        ? (personUpdate = "Snoop")
+        : console.log("Please choose a vaild option!");
+      //update new information from the user for first name and role id
+      connection.query(
+        `UPDATE employee SET first_name='${personUpdate}', role_id='${rolesssId}' WHERE id=2`,
+
+        function (err, res) {
+          if (err) throw err;
+          console.log("You successfuly updated an employee!");
+          lastQuestion();
+        }
+      );
+    });
+}
 //end of every user walkthrough, eithere start over or quit
 function lastQuestion() {
   inquirer
