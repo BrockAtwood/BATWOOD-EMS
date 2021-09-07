@@ -48,6 +48,10 @@ THEN I am prompted to select an employee to update and their new role and this i
 https://drive.google.com/file/d/1i7hm8kpBngyKTapijl4Tm4piGIlUuFML/view?usp=sharing
 
 ## ScreenShots
+<img width="954" alt="Screen Shot 2021-09-06 at 11 50 57 PM" src="https://user-images.githubusercontent.com/87385012/132292030-1eb607d9-b126-4c8d-91e7-044c73089198.png">
+<img width="963" alt="Screen Shot 2021-09-06 at 11 51 30 PM" src="https://user-images.githubusercontent.com/87385012/132292051-99d10109-c4e7-47cc-82d1-1e7c64fe0d27.png">
+
+
 
 ## Github Repository Link
 
