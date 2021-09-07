@@ -42,7 +42,11 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 3.) To start "Atwood Entertainment" (Employee Tracker) application, run the command "node server.js".
 
-## walkthrough Video Link
+## Walkthrough Video Link
+
+https://drive.google.com/file/d/1i7hm8kpBngyKTapijl4Tm4piGIlUuFML/view?usp=sharing
+
+## ScreenShots
 
 ## Github Repository Link
 
