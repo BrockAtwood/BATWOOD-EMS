@@ -329,9 +329,11 @@ async function updateEmployeeRole() {
     .then((response) => {
       const person = response.employ;
       const rolesss = response.updatedRole;
+      const idUpdate = response.employ;
 
       let rolesssId;
       let personUpdate;
+      let idUpdatee;
 
       rolesss === "Manager"
         ? (rolesssId = 1)
@@ -368,9 +370,26 @@ async function updateEmployeeRole() {
         : person === "Snoop Dogg"
         ? (personUpdate = "Snoop")
         : console.log("Please choose a vaild option!");
+
+      idUpdate === "Brock Atwood"
+        ? (idUpdatee = 1)
+        : idUpdate === "Suzy Evans"
+        ? (idUpdatee = 2)
+        : idUpdate === "Jon Candy"
+        ? (idUpdatee = 3)
+        : idUpdate === "Bob Hope"
+        ? (idUpdatee = 3)
+        : idUpdate === "Lebron James"
+        ? (idUpdatee = 5)
+        : idUpdate === "Chris Paul"
+        ? (idUpdatee = 6)
+        : idUpdate === "Snoop Dogg"
+        ? (idUpdatee = 7)
+        : console.log("Please choose a vaild option!");
+
       //update new information from the user for first name and role id
       connection.query(
-        `UPDATE employee SET first_name='${personUpdate}', role_id='${rolesssId}' WHERE id=2`,
+        `UPDATE employee SET first_name='${personUpdate}', role_id='${rolesssId}' WHERE id='${idUpdatee}'`,
 
         function (err, res) {
           if (err) throw err;
