@@ -41,6 +41,7 @@ THEN I am prompted to select an employee to update and their new role and this i
 2.) Next user needs to download Node and inquirer modules.
 
 3.) To start "Atwood Entertainment" (Employee Tracker) application, run the command "node server.js".
+```
 
 ## Walkthrough Video Link
 
@@ -51,4 +52,7 @@ https://drive.google.com/file/d/1i7hm8kpBngyKTapijl4Tm4piGIlUuFML/view?usp=shari
 ## Github Repository Link
 
 https://github.com/BrockAtwood/BATWOOD-EMS
+
+```
+
 ```
